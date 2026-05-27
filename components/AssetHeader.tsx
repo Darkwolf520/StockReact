@@ -25,12 +25,15 @@ function sanitizeImageUrl(url?: string | null) {
 
 type AssetHeaderProps = {
   asset: Asset;
+  textColor?: string;
+  opacity: number;
   categories: Category[];
   vendors: AssetVendor[];
 };
 
 export default function AssetHeader({
   asset,
+  textColor,
   categories,
   vendors,
 }: AssetHeaderProps) {
@@ -41,8 +44,6 @@ export default function AssetHeader({
   }, [asset]);
 
   const vendorImage = sanitizeImageUrl(currentAsset.vendor.style?.image);
-  const vendorColor = currentAsset.vendor.style?.color ?? undefined;
-  const accentColor = currentAsset.vendor.style?.accentColor ?? "#FFFFFF";
   const currencySymbol =
     typeof currentAsset.currency === "string"
       ? currentAsset.currency
@@ -51,35 +52,12 @@ export default function AssetHeader({
 
   return (
     <>
-      <div className="flex justify-between w-full">
-        <div className="space-y-3">
-          <h1
-            className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.28)]"
-            style={{ color: vendorColor }}
-          >
-            {currentAsset.name}
-          </h1>
-        </div>
-        <AssetEditButton
-          asset={currentAsset}
-          categories={categories}
-          vendors={vendors}
-          color={vendorColor}
-          onSuccess={setCurrentAsset}
-        />
-      </div>
-
-      <Card
-        className="flex flex-col sm:flex-row gap-4 items-center sm:w-fit bg-transparent shadow-lg ring-1 ring-black/5"
-        style={{ backgroundColor: accentColor }}
-      >
-        <div className="text-lg">Total value: </div>
-        <div className="text-2xl font-semibold leading-none">
+      <Card variant="strong" className={textColor}>
+        <div>PORTFOLIO VALUE</div>
+        <h1>
           {formattedValue} {currencySymbol}
-        </div>
-      </Card>
+        </h1>
 
-      <div className="flex gap-4 items-center justify-between">
         {vendorImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -88,13 +66,9 @@ export default function AssetHeader({
             className="h-14 max-w-[180px] object-contain rounded bg-white px-1 py-0.5"
           />
         ) : (
-          <div className="text-2xl" style={{ color: vendorColor }}>
-            {currentAsset.vendor.name}
-          </div>
+          <div className="text-2xl">{currentAsset.vendor.name}</div>
         )}
-
-        <AssetCategoryLabel category={currentAsset.category} />
-      </div>
+      </Card>
     </>
   );
 }

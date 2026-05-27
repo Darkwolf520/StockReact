@@ -18,7 +18,6 @@ import { useMemo, useState } from "react";
 import { Line } from "react-chartjs-2";
 
 import { Button } from "@/components/ui/button";
-import { getContrastTextColor } from "@/lib/utils";
 import { Transaction } from "@/types/domain";
 
 ChartJS.register(
@@ -36,6 +35,8 @@ type AssetChartProps = {
   transactions: Transaction[];
   title?: string;
   accentColor?: string;
+  backgroundColor?: string;
+  lineColor?: string;
   buttonColor?: string;
   secondaryButtonColor?: string;
   showSecondaryButtonShadow?: boolean;
@@ -110,9 +111,7 @@ const createChartAreaBackgroundPlugin = (
 export default function AssetChart({
   transactions,
   title = "Net Cash Flow",
-  accentColor,
-  buttonColor,
-  secondaryButtonColor,
+  lineColor,
   showSecondaryButtonShadow = true,
 }: AssetChartProps) {
   const [selectedRange, setSelectedRange] = useState<RangeKey>("1m");
@@ -238,18 +237,8 @@ export default function AssetChart({
     setAnchorMonth((prev) => addMonthsAtMonthStart(prev, delta));
   };
 
-  const chartCardBackground = accentColor ?? "#FFFFFF";
-  const chartAreaBackground = accentColor ?? "#FFFFFF";
-  const primaryButtonBg = buttonColor;
-  const secondaryButtonBg = secondaryButtonColor ?? buttonColor;
-  const primaryButtonTextColor = primaryButtonBg
-    ? getContrastTextColor(primaryButtonBg)
-    : undefined;
-  const secondaryButtonTextColor = secondaryButtonColor
-    ? getContrastTextColor(secondaryButtonColor)
-    : primaryButtonTextColor;
-  const hasWhiteSecondaryButton =
-    secondaryButtonBg?.toLowerCase() === "#ffffff";
+  const chartCardBackground = "rgba(255,255,255,0.6)";
+  const chartAreaBackground = "rgba(255,255,255,0.5)";
   const buttonShadowStyle = showSecondaryButtonShadow
     ? { boxShadow: "4px 4px 0 rgba(0,0,0,0.28)" }
     : undefined;
@@ -261,8 +250,8 @@ export default function AssetChart({
         label: "Net Flow",
         data: netData,
         spanGaps: true,
-        borderColor: "#4F46E5",
-        backgroundColor: "rgba(79,70,229,0.3)",
+        borderColor: lineColor ?? "#4F46E5",
+        backgroundColor: lineColor ? `${lineColor}4D` : "rgba(79,70,229,0.3)", // 4D is ~0.3 opacity in hex
         tension: 0.3,
         fill: true,
       },
@@ -304,20 +293,10 @@ export default function AssetChart({
       <div className="mb-3 flex items-center justify-between gap-2">
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className={hasWhiteSecondaryButton ? undefined : "border-0"}
           disabled={selectedRange === "all"}
           onClick={() => handleStep("prev")}
-          style={
-            secondaryButtonBg
-              ? {
-                  backgroundColor: secondaryButtonBg,
-                  color: secondaryButtonTextColor,
-                  ...buttonShadowStyle,
-                }
-              : undefined
-          }
         >
           {"<"}
         </Button>
@@ -329,20 +308,10 @@ export default function AssetChart({
         </div>
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className={hasWhiteSecondaryButton ? undefined : "border-0"}
           disabled={selectedRange === "all"}
           onClick={() => handleStep("next")}
-          style={
-            secondaryButtonBg
-              ? {
-                  backgroundColor: secondaryButtonBg,
-                  color: secondaryButtonTextColor,
-                  ...buttonShadowStyle,
-                }
-              : undefined
-          }
         >
           {">"}
         </Button>
@@ -361,30 +330,10 @@ export default function AssetChart({
           <Button
             key={range.key}
             type="button"
-            variant={selectedRange === range.key ? "default" : "outline"}
+            variant="ghost"
             size="sm"
-            className={
-              selectedRange === range.key || hasWhiteSecondaryButton
-                ? undefined
-                : "border-0"
-            }
+            isActive={selectedRange === range.key}
             onClick={() => handleRangeChange(range.key)}
-            style={
-              selectedRange === range.key && primaryButtonBg
-                ? {
-                    backgroundColor: primaryButtonBg,
-                    color: primaryButtonTextColor,
-                    borderColor: primaryButtonBg,
-                    ...buttonShadowStyle,
-                  }
-                : selectedRange !== range.key && secondaryButtonBg
-                  ? {
-                      backgroundColor: secondaryButtonBg,
-                      color: secondaryButtonTextColor,
-                      ...buttonShadowStyle,
-                    }
-                  : undefined
-            }
           >
             {range.label}
           </Button>

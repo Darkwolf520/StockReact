@@ -33,11 +33,13 @@ export default function AssetTransactions({
   asset,
   transactions,
   accentColor,
+  backgroundColor,
   buttonColor,
 }: {
   asset: Asset;
   transactions: Transaction[];
   accentColor?: string;
+  backgroundColor?: string;
   buttonColor?: string;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -172,7 +174,7 @@ export default function AssetTransactions({
     }
   };
 
-  const tableBackground = accentColor ?? "#FFFFFF";
+  const tableBackground = backgroundColor ?? accentColor ?? "#FFFFFF";
   const primaryButtonTextColor = buttonColor
     ? getContrastTextColor(buttonColor)
     : undefined;
@@ -202,7 +204,7 @@ export default function AssetTransactions({
       <div className="mb-4">
         <div
           className="overflow-hidden rounded-lg border border-gray-300 shadow-lg ring-1 ring-black/5"
-          style={{ backgroundColor: tableBackground }}
+          style={{ backgroundColor: "rgba(255,255,255,0.6)" }}
         >
           <div className="border-b border-gray-200 px-4 py-3 text-sm font-semibold">
             Transactions

@@ -24,6 +24,7 @@ type FilterableDataTableProps<TData> = {
   getCellClassName?: (row: TData, columnId: string) => string;
   getCellValueClassName?: (row: TData, columnId: string) => string;
   getMobileLabel?: (columnId: string) => string;
+  backgroundColor?: string;
 };
 
 export default function FilterableDataTable<TData>({
@@ -36,6 +37,7 @@ export default function FilterableDataTable<TData>({
   getCellClassName,
   getCellValueClassName,
   getMobileLabel,
+  backgroundColor,
 }: FilterableDataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -55,7 +57,13 @@ export default function FilterableDataTable<TData>({
   });
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-300 bg-white">
+    <div
+      className={cn(
+        "overflow-hidden rounded-lg border border-gray-300",
+        !backgroundColor && "bg-white",
+      )}
+      style={backgroundColor ? { backgroundColor } : undefined}
+    >
       {title && (
         <div className="border-b border-gray-200 px-4 py-3 text-sm font-semibold">
           {title}
