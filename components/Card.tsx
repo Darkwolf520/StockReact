@@ -3,24 +3,19 @@ import { HTMLAttributes, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-const cardVariants = cva("border border-[#E0E3E7] rounded-4xl p-6", {
+const cardVariants = cva("border rounded-4xl backdrop-blur-lg", {
   variants: {
     variant: {
-      default: "bg-white/20",
-      strong: "bg-white/30",
+      default:
+        "p-5 bg-white/30 border-white/45 shadow-[0_8px_32px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.1)]",
+      strong:
+        "p-6 bg-white/35 border-white/60 shadow-[0_16px_48px_rgba(0,0,0,0.22),inset_0_1.5px_0_rgba(255,255,255,0.7),inset_0_-1px_0_rgba(255,255,255,0.15)]",
     },
   },
   defaultVariants: {
     variant: "default",
   },
 });
-
-const BOX_SHADOWS: Record<string, string> = {
-  default:
-    "0 8px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(255,255,255,0.1)",
-  strong:
-    "0 16px 48px rgba(0,0,0,0.22), inset 0 1.5px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(255,255,255,0.15)",
-};
 
 type CardProps = HTMLAttributes<HTMLDivElement> &
   VariantProps<typeof cardVariants> & {
@@ -34,11 +29,7 @@ export default function Card({
   ...props
 }: CardProps) {
   return (
-    <div
-      className={cn(cardVariants({ variant }), className)}
-      style={{ boxShadow: BOX_SHADOWS[variant ?? "default"] }}
-      {...props}
-    >
+    <div className={cn(cardVariants({ variant }), className)} {...props}>
       {children}
     </div>
   );

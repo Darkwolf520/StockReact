@@ -9,19 +9,19 @@ export const createCategorySchema = z.object({
   name: z.string().min(1, "Category name is required"),
   style: z
     .object({
+      icon: z.string().optional(),
       color: optionalHexColor.optional(),
-      bgColor: optionalHexColor.optional(),
     })
     .optional()
     .transform((style) => {
       if (!style) return undefined;
 
       const nextStyle = {
+        icon: style.icon || undefined,
         color: style.color || undefined,
-        bgColor: style.bgColor || undefined,
       };
 
-      if (!nextStyle.color && !nextStyle.bgColor) {
+      if (!nextStyle.icon && !nextStyle.color) {
         return undefined;
       }
 

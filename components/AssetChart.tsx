@@ -237,11 +237,7 @@ export default function AssetChart({
     setAnchorMonth((prev) => addMonthsAtMonthStart(prev, delta));
   };
 
-  const chartCardBackground = "rgba(255,255,255,0.6)";
-  const chartAreaBackground = "rgba(255,255,255,0.5)";
-  const buttonShadowStyle = showSecondaryButtonShadow
-    ? { boxShadow: "4px 4px 0 rgba(0,0,0,0.28)" }
-    : undefined;
+  const chartAreaBackground = "rgba(255,255,255,0.3)";
 
   const data: ChartData<"line"> = {
     labels,
@@ -286,10 +282,7 @@ export default function AssetChart({
   };
 
   return (
-    <div
-      className="rounded-lg shadow-lg ring-1 ring-black/5 p-4"
-      style={{ backgroundColor: chartCardBackground }}
-    >
+    <div className="rounded-lg mt-8 p-4 glass">
       <div className="mb-3 flex items-center justify-between gap-2">
         <Button
           type="button"

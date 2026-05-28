@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { assetCategoryClient } from "@/clients/AssetCategoryClient";
 import { FormColorInputItem } from "@/components/input/color";
+import { FormIconPickerItem } from "@/components/input/icon-picker";
 import { FormInputItem } from "@/components/input/input";
 import DeleteConfirmDialog from "@/components/modal/DeleteConfirmDialog";
 import ModalActionFooter from "@/components/modal/ModalActionFooter";
@@ -38,8 +39,8 @@ const optionalHexColor = z.union([
 
 const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
+  icon: z.string().optional(),
   color: optionalHexColor,
-  bgColor: optionalHexColor,
   description: z.string().optional(),
 });
 
@@ -69,8 +70,8 @@ export default function AssetCategoryModal({
     resolver: zodResolver(categorySchema),
     defaultValues: {
       name: "",
+      icon: "",
       color: "",
-      bgColor: "",
       description: "",
     },
   });
@@ -87,15 +88,15 @@ export default function AssetCategoryModal({
     if (category) {
       reset({
         name: category.name,
+        icon: category.style?.icon ?? "",
         color: category.style?.color ?? "",
-        bgColor: category.style?.bgColor ?? "",
         description: category.description ?? "",
       });
     } else {
       reset({
         name: "",
+        icon: "",
         color: "",
-        bgColor: "",
         description: "",
       });
     }
@@ -104,13 +105,13 @@ export default function AssetCategoryModal({
   const onFormSubmit = async (data: FormValues) => {
     try {
       const style = {
+        icon: data.icon || undefined,
         color: data.color || undefined,
-        bgColor: data.bgColor || undefined,
       };
 
       const payload = {
         name: data.name,
-        style: style.color || style.bgColor ? style : undefined,
+        style: style.icon || style.color ? style : undefined,
         description: data.description,
       };
 
@@ -168,21 +169,19 @@ export default function AssetCategoryModal({
                 placeholder="Category name"
               />
 
-              <FormColorInputItem
+              <FormIconPickerItem
                 control={form.control}
-                name="color"
-                label="Text color"
-                placeholder="#000000"
-                pickerDefault="#000000"
-                pickerLabel="Text color picker"
+                name="icon"
+                label="Icon"
+                accentColor={form.watch("color") || undefined}
               />
 
               <FormColorInputItem
                 control={form.control}
-                name="bgColor"
-                label="Background color"
-                placeholder="#ffffff"
-                pickerDefault="#ffffff"
+                name="color"
+                label="Color"
+                placeholder="#000000"
+                pickerDefault="#000000"
                 pickerLabel="Background color picker"
               />
 

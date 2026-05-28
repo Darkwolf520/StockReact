@@ -4,6 +4,7 @@ export interface StyleDTO {
 }
 
 export interface CategoryStyleDTO extends StyleDTO {
+  icon?: string | null;
   image?: string | null;
   bgColor?: string | null;
   accentColor?: string | null;

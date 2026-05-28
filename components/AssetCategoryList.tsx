@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 
+import GhostIcon from "@/components/GhostIcon";
 import {
   ColumnHeaderWithFilter,
   TextColumnFilter,
@@ -56,17 +57,11 @@ export default function AssetCategoryList({
         ),
         cell: ({ row }) => (
           <div className="flex items-center gap-3 font-semibold sm:font-normal">
-            {(row.original.style?.bgColor || row.original.style?.color) && (
-              <span
-                className="inline-flex min-w-14 shrink-0 justify-center rounded border border-black/10 px-2 py-1 text-xs"
-                style={{
-                  backgroundColor: row.original.style?.bgColor ?? undefined,
-                  color: row.original.style?.color ?? undefined,
-                }}
-              >
-                Aa
-              </span>
-            )}
+            <GhostIcon
+              icon={row.original.style?.icon}
+              fallback={row.original.name[0].toUpperCase()}
+              color={row.original.style?.color}
+            />
             {row.original.name}
           </div>
         ),

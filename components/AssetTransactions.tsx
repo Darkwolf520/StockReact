@@ -13,17 +13,15 @@ import {
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 
+import GhostIcon from "@/components/GhostIcon";
 import {
-  ColumnHeaderWithFilter,
-  DateRangeColumnFilter,
-  NumberRangeColumnFilter,
-  SelectColumnFilter,
-  TextColumnFilter,
   caseInsensitiveEqualsFilterFn,
   dateRangeFilterFn,
   numberRangeFilterFn,
 } from "@/components/table/ColumnFilterControls";
+import FilterBar from "@/components/table/FilterBar";
 import { Button } from "@/components/ui/button";
+import { getTransactionCategoryStyle } from "@/lib/transaction-category-styles";
 import { getContrastTextColor } from "@/lib/utils";
 import { Asset, Transaction } from "@/types/domain";
 
@@ -78,61 +76,124 @@ export default function AssetTransactions({
   const currencySymbol =
     typeof asset.currency === "string" ? asset.currency : asset.currency.symbol;
 
-  const availableTypes = useMemo(() => {
+  const availableCategories = useMemo(() => {
     return Array.from(
-      new Set(localTransactions.map((transaction) => transaction.type)),
-    );
+      new Set(
+        localTransactions
+          .map((transaction) => transaction.categoryName)
+          .filter(Boolean),
+      ),
+    ) as string[];
   }, [localTransactions]);
 
-  const typeFilterOptions = useMemo(
-    () => availableTypes.map((type) => ({ value: type, label: type })),
-    [availableTypes],
+  const categoryFilterOptions = useMemo(
+    () => availableCategories.map((cat) => ({ value: cat, label: cat })),
+    [availableCategories],
+  );
+
+  const filterColumns = useMemo(
+    () => [
+      {
+        id: "categoryName",
+        label: "Category",
+        type: "select" as const,
+        options: categoryFilterOptions,
+      },
+      { id: "name", label: "Name", type: "text" as const },
+      { id: "amount", label: "Amount", type: "number-range" as const },
+      { id: "date", label: "Transaction date", type: "date-range" as const },
+    ],
+    [categoryFilterOptions],
+  );
+
+  const SortableHeader = ({
+    column,
+    label,
+  }: {
+    column: {
+      toggleSorting: (asc: boolean) => void;
+      clearSorting: () => void;
+      getIsSorted: () => false | "asc" | "desc";
+    };
+    label: string;
+  }) => (
+    <button
+      type="button"
+      className="cursor-pointer font-medium"
+      onClick={() => {
+        const current = column.getIsSorted();
+        if (current === "desc") {
+          column.clearSorting();
+        } else {
+          column.toggleSorting(current === "asc");
+        }
+      }}
+    >
+      {label}{" "}
+      {column.getIsSorted() === "asc"
+        ? "↑"
+        : column.getIsSorted() === "desc"
+          ? "↓"
+          : ""}
+    </button>
   );
 
   const columns = useMemo<ColumnDef<Transaction>[]>(
     () => [
       {
-        accessorKey: "name",
+        accessorKey: "categoryName",
+        filterFn: caseInsensitiveEqualsFilterFn<Transaction>(),
         header: ({ column }) => (
-          <ColumnHeaderWithFilter column={column} label="Name">
-            <TextColumnFilter column={column} placeholder="Filter" />
-          </ColumnHeaderWithFilter>
+          <SortableHeader column={column} label="Category" />
         ),
+        cell: ({ row }) => {
+          const name = row.original.categoryName;
+          if (!name) return "-";
+          const style = getTransactionCategoryStyle(name);
+
+          return (
+            <div className="flex items-center gap-2">
+              <GhostIcon
+                icon={style.icon || undefined}
+                fallback={name[0].toUpperCase()}
+                color={style.color}
+                size="md"
+              />
+              <span className="hidden md:inline-block">{name}</span>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "name",
+        header: ({ column }) => <SortableHeader column={column} label="Name" />,
       },
       {
         accessorKey: "amount",
         filterFn: numberRangeFilterFn<Transaction>(),
+        sortingFn: (rowA, rowB) => {
+          const signA = rowA.original.type.toLowerCase() === "income" ? 1 : -1;
+          const signB = rowB.original.type.toLowerCase() === "income" ? 1 : -1;
+          return rowA.original.amount * signA - rowB.original.amount * signB;
+        },
         header: ({ column }) => (
-          <ColumnHeaderWithFilter column={column} label="Amount">
-            <NumberRangeColumnFilter column={column} />
-          </ColumnHeaderWithFilter>
+          <SortableHeader column={column} label="Amount" />
         ),
-        cell: ({ row }) => `${row.original.amount} ${currencySymbol}`,
+        cell: ({ row }) => {
+          const prefix =
+            row.original.type.toLowerCase() === "income" ? "+" : "-";
+          return `${prefix}${row.original.amount} ${currencySymbol}`;
+        },
       },
       {
         accessorKey: "date",
         filterFn: dateRangeFilterFn<Transaction>(),
         header: ({ column }) => (
-          <ColumnHeaderWithFilter column={column} label="Transaction date">
-            <DateRangeColumnFilter column={column} />
-          </ColumnHeaderWithFilter>
+          <SortableHeader column={column} label="Transaction date" />
         ),
-      },
-      {
-        accessorKey: "type",
-        header: ({ column }) => (
-          <ColumnHeaderWithFilter column={column} label="Type">
-            <SelectColumnFilter
-              column={column}
-              options={typeFilterOptions}
-              allLabel="All"
-            />
-          </ColumnHeaderWithFilter>
-        ),
-        filterFn: caseInsensitiveEqualsFilterFn<Transaction>(),
       },
     ],
-    [currencySymbol, typeFilterOptions],
+    [currencySymbol],
   );
 
   const table = useReactTable({
@@ -154,27 +215,20 @@ export default function AssetTransactions({
       case "name":
         return "text-lg font-medium sm:text-base sm:font-normal";
       case "amount":
-        return "text-lg font-medium sm:text-base sm:font-normal";
+        return clsx("text-lg font-medium sm:text-base sm:font-normal", {
+          "text-emerald-700": row.type.toLowerCase() === "income",
+          "text-rose-700": row.type.toLowerCase() === "expense",
+        });
       case "date":
         return "text-gray-600 sm:text-black";
 
-      case "type": {
-        const normalizedType = row.type.toLowerCase();
-
-        return clsx(
-          "w-fit rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-wide",
-          {
-            "bg-emerald-100 text-emerald-800": normalizedType === "income",
-            "bg-rose-100 text-rose-800": normalizedType === "expense",
-          },
-        );
-      }
+      case "categoryName":
+        return "";
       default:
         return "";
     }
   };
 
-  const tableBackground = backgroundColor ?? accentColor ?? "#FFFFFF";
   const primaryButtonTextColor = buttonColor
     ? getContrastTextColor(buttonColor)
     : undefined;
@@ -202,67 +256,92 @@ export default function AssetTransactions({
       </div>
 
       <div className="mb-4">
-        <div
-          className="overflow-hidden rounded-lg border border-gray-300 shadow-lg ring-1 ring-black/5"
-          style={{ backgroundColor: "rgba(255,255,255,0.6)" }}
-        >
-          <div className="border-b border-gray-200 px-4 py-3 text-sm font-semibold">
-            Transactions
-          </div>
+        <div className="overflow-hidden rounded-lg glass">
+          <div className="px-4 py-3 text-sm font-semibold">Transactions</div>
+
+          <FilterBar table={table} columns={filterColumns} />
 
           <div className="text-sm">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <div
-                key={headerGroup.id}
-                className="grid grid-cols-2 sm:grid-cols-4 border-b border-gray-200"
-                style={{ backgroundColor: "rgba(255,255,255,0.55)" }}
-              >
-                {headerGroup.headers.map((header) => (
-                  <div key={header.id} className="px-4 py-2 font-medium">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </div>
-                ))}
-              </div>
-            ))}
-
-            <div className="divide-y divide-gray-100">
-              {table.getRowModel().rows.map((tableRow) => (
-                <div
-                  key={tableRow.id}
-                  onClick={() => openModal(tableRow.original)}
-                  className="cursor-pointer py-3 sm:grid sm:grid-cols-4 sm:items-center sm:py-2 grid grid-cols-2"
-                  style={{ backgroundColor: "rgba(255,255,255,0.35)" }}
-                >
-                  {tableRow.getVisibleCells().map((cell) => (
-                    <div
-                      key={cell.id}
-                      className={clsx(
-                        "py-1 px-4 sm:py-0 flex sm:block",
-                        cell.column.id === "amount" || cell.column.id === "type"
-                          ? "justify-end"
-                          : "",
-                      )}
-                    >
-                      <div
-                        className={getCellValueClassName(
-                          tableRow.original,
-                          cell.column.id,
-                        )}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </div>
+            {/* Desktop headers */}
+            <div className="hidden sm:block">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <div key={headerGroup.id} className="grid grid-cols-4">
+                  {headerGroup.headers.map((header) => (
+                    <div key={header.id} className="px-4 py-2 font-medium">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </div>
                   ))}
                 </div>
               ))}
+            </div>
+
+            <div className="divide-y divide-gray-100">
+              {table.getRowModel().rows.map((tableRow) => {
+                const row = tableRow.original;
+                const style = getTransactionCategoryStyle(
+                  row.categoryName ?? "",
+                );
+                const prefix = row.type.toLowerCase() === "income" ? "+" : "-";
+
+                return (
+                  <div
+                    key={tableRow.id}
+                    onClick={() => openModal(row)}
+                    className="cursor-pointer"
+                  >
+                    {/* Mobile card */}
+                    <div className="flex items-center gap-3 px-4 py-3 sm:hidden">
+                      <GhostIcon
+                        icon={style.icon || undefined}
+                        fallback={row.categoryName?.[0]?.toUpperCase() ?? "?"}
+                        color={style.color}
+                        size="md"
+                      />
+                      <div className="flex flex-1 flex-col min-w-0">
+                        <span className="truncate font-medium">{row.name}</span>
+                        <span className="text-xs text-gray-500">
+                          {row.date}
+                        </span>
+                      </div>
+                      <span
+                        className={clsx(
+                          "shrink-0 font-medium",
+                          row.type.toLowerCase() === "income"
+                            ? "text-emerald-700"
+                            : "text-rose-700",
+                        )}
+                      >
+                        {prefix}
+                        {row.amount} {currencySymbol}
+                      </span>
+                    </div>
+
+                    {/* Desktop grid */}
+                    <div className="hidden sm:grid sm:grid-cols-4 sm:items-center sm:py-2">
+                      {tableRow.getVisibleCells().map((cell) => (
+                        <div key={cell.id} className={clsx("px-4 flex")}>
+                          <div
+                            className={getCellValueClassName(
+                              row,
+                              cell.column.id,
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
 
               {table.getRowModel().rows.length === 0 && (
                 <div className="px-4 py-6 text-center text-gray-500">

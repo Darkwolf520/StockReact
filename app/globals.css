@@ -98,6 +98,13 @@ body,
   h2 {
     @apply text-xl md:text-2xl font-semibold tracking-tight;
   }
+
+  .glass {
+    @apply bg-white/30 border border-white/45 shadow-[0_8px_32px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.1)];
+  }
+  .glass-strong {
+    @apply bg-white/35 border border-white/60 shadow-[0_16px_48px_rgba(0,0,0,0.22),inset_0_1.5px_0_rgba(255,255,255,0.7),inset_0_-1px_0_rgba(255,255,255,0.15)];
+  }
 }
 
 .blob {

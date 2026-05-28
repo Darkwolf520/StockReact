@@ -7,6 +7,7 @@ export interface Style {
 }
 
 export interface CategoryStyle extends Style {
+  icon?: string | null;
   image?: string | null;
   bgColor?: string | null;
   accentColor?: string | null;
