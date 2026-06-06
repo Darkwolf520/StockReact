@@ -8,8 +8,8 @@ export default async function Home() {
   const assets = await assetService.getAll();
 
   return (
-    <div className="pb-2">
-      <Card className="mb-8 flex justify-between items-center sm:w-[400px]">
+    <div>
+      <Card className="mb-8 flex justify-between items-center sm:w-[400px] text-white">
         <div className="text-2xl">Balance:</div>
         <div className="text-xl font-bold">
           {Intl.NumberFormat("hu-HU").format(user.totalValue)} Ft
@@ -17,7 +17,7 @@ export default async function Home() {
       </Card>
       <div className="flex flex-col gap-y-4">
         {assets.map((asset) => {
-          return <StockCard key={asset.id} {...asset} />;
+          return <StockCard className="text-white" key={asset.id} {...asset} />;
         })}
       </div>
     </div>

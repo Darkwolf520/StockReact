@@ -21,12 +21,12 @@ export default function SideMenuElement({
 }: SideMenuElementProps) {
   const baseClasses = clsx(
     "group cursor-pointer flex flex-col items-center justify-center w-15",
-    !isActive && "rounded-lg text-[#A4ACB9] hover:bg-[#1E3258]",
+    !isActive && "rounded-lg text-white hover:bg-[rgba(255,255,255,0.1)]",
   );
 
   const iconWrapperClasses = clsx(
     "size-10 flex items-center justify-center rounded-lg",
-    isActive ? "bg-white" : "text-gray-500",
+    isActive ? "bg-white" : "text-white",
   );
 
   const iconClasses = clsx(

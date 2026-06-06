@@ -30,14 +30,10 @@ import TransactionModal from "./TransactionModal";
 export default function AssetTransactions({
   asset,
   transactions,
-  accentColor,
-  backgroundColor,
   buttonColor,
 }: {
   asset: Asset;
   transactions: Transaction[];
-  accentColor?: string;
-  backgroundColor?: string;
   buttonColor?: string;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);

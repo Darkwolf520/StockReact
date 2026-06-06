@@ -21,7 +21,10 @@ function sanitizeImageUrl(url?: string | null) {
   }
 }
 
-export default function StockCard(asset: Asset) {
+export default function StockCard({
+  className,
+  ...asset
+}: Asset & { className?: string }) {
   const vendor = asset.vendor;
   const category = asset.category;
   const vendorColor = vendor.style?.color || "";
@@ -41,7 +44,10 @@ export default function StockCard(asset: Asset) {
       : undefined;
 
   return (
-    <Card className="sm:max-w-[750px] cursor-pointer" style={cardStyle}>
+    <Card
+      className={clsx("sm:max-w-[750px] cursor-pointer", className)}
+      style={cardStyle}
+    >
       <Link href={href}>
         <div className="flex flex-col sm:flex-row justify-between items-center gap-y-4">
           <div className={clsx("flex items-center")}>

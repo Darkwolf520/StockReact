@@ -1,4 +1,4 @@
-"use client"; // 👈 add this at the very top!
+"use client";
 
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
@@ -10,6 +10,7 @@ import CategoryLogo from "@/icons/category.svg";
 import HomeLogo from "@/icons/home.svg";
 import LogOut from "@/icons/log-out.svg";
 import UserLogo from "@/icons/users.svg";
+import { useAppSelector } from "@/lib/store/store";
 
 type SideMenuProps = {
   isAdmin: boolean;
@@ -17,6 +18,7 @@ type SideMenuProps = {
 
 export default function SideMenu({ isAdmin }: SideMenuProps) {
   const router = useRouter();
+  const theme = useAppSelector((state) => state.userPreferences.theme);
 
   const handleLogout = async () => {
     await authClient.logout();
@@ -46,10 +48,19 @@ export default function SideMenu({ isAdmin }: SideMenuProps) {
 
   return (
     <div
-      className="fixed sm:static bottom-0 w-full bg-[#17253E] h-[50px] sm:h-full sm:w-[80px] flex
-            sm:flex-col gap-4 items-center justify-between sm:py-2"
+      className="fixed sm:static bottom-5 h-[50px] sm:h-full sm:w-[80px] flex
+            sm:flex-col sm:gap-4 items-center sm:justify-between sm:py-2 z-10 rounded-2xl sm:rounded-none w-fit
+            px-4 bg-white/70 sm:bg-transparent shadow-[0_4px_20px_4px_rgba(0,0,0,0.2)] sm:shadow-none
+            border-1 border-white/30 sm:border-none
+            "
+      style={
+        {
+          "--theme-bg-first": theme.background.first,
+          "--theme-bg-second": theme.background.second,
+          "--theme-bg-third": theme.background.third,
+        } as React.CSSProperties
+      }
     >
-      <div className="w-15 sm:w-0 sm:hidden"></div>
       <div className="flex sm:flex-col gap-y-2">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;

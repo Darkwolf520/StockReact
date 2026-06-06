@@ -26,17 +26,9 @@ function sanitizeImageUrl(url?: string | null) {
 type AssetHeaderProps = {
   asset: Asset;
   textColor?: string;
-  opacity: number;
-  categories: Category[];
-  vendors: AssetVendor[];
 };
 
-export default function AssetHeader({
-  asset,
-  textColor,
-  categories,
-  vendors,
-}: AssetHeaderProps) {
+export default function AssetHeader({ asset, textColor }: AssetHeaderProps) {
   const [currentAsset, setCurrentAsset] = useState(asset);
 
   useEffect(() => {

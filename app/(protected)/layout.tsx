@@ -2,42 +2,34 @@ import "@/app/globals.css";
 import { cookies } from "next/headers";
 import React from "react";
 
-import { UserProvider } from "@/app/(app)/UserProvider";
 import Menu from "@/components/Menu/Menu";
 import SideMenu from "@/components/Menu/SideMenu";
-import { userService } from "@/lib/services/user.service";
+import ThemedBackground from "@/components/ThemedBackground";
 import { ROLES } from "@/types/auth";
 
-type UserLayoutProps = {
-  menuTitle?: string;
-  pageTitle?: string;
-  children: React.ReactNode;
-};
-
 export default async function UserLayout({
-  menuTitle = "",
   children,
-}: UserLayoutProps) {
+}: {
+  children: React.ReactNode;
+}) {
   const cookieStore = await cookies();
   const role = cookieStore.get("role")?.value;
   const isAdmin = role === ROLES.ADMIN;
 
-  let user = null;
-  try {
-    user = await userService.getCurrentUser();
-  } catch {}
-
   return (
-    <UserProvider user={user}>
-      <div className="bg-[#17253E] h-full">
-        <Menu title={menuTitle} />
-        <div className="flex flex-col-reverse sm:flex-row sm:h-[calc(100vh-65px)]">
+    <>
+      <ThemedBackground />
+      <div className="relative z-10">
+        <Menu />
+        <div className="flex flex-col-reverse sm:flex-row h-full sm:h-[calc(100vh-65px)] items-center">
           <SideMenu isAdmin={isAdmin} />
-          <div className="bg-linear-to-b from-[#6756FF] to-[#9DE5FF] w-full sm:rounded-tl-lg pt-4 px-4 pb-[20px] mb-[50px] sm:mb-0 min-h-[calc(100dvh-65px)] sm:h-full overflow-x-hidden">
-            {children}
+          <div className="w-full overflow-y-auto overflow-x-hidden h-full">
+            <div className="w-full px-4 sm:py-2 pb-[50px] sm:mb-0">
+              {children}
+            </div>
           </div>
         </div>
       </div>
-    </UserProvider>
+    </>
   );
 }
