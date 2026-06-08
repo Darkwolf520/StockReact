@@ -1,17 +1,15 @@
 "use client";
 
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 
 import AssetEditModal from "@/components/AssetEditModal";
-import Icon from "@/components/Icon";
-import EditIcon from "@/icons/edit.svg";
 import { Asset, AssetVendor, Category } from "@/types/domain";
 
 type Props = {
   asset: Asset;
   categories: Category[];
   vendors: AssetVendor[];
-  color?: string;
   onSuccess?: (asset: Asset) => void;
 };
 
@@ -19,7 +17,6 @@ export default function AssetEditButton({
   asset,
   categories,
   vendors,
-  color,
   onSuccess,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -30,13 +27,9 @@ export default function AssetEditButton({
         type="button"
         aria-label="Edit asset"
         onClick={() => setOpen(true)}
-        className="rounded-2xl p-1 transition"
+        className="cursor-pointer inline-flex items-center justify-center size-10 rounded-full bg-white/30 border border-white/45 shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.7)] hover:bg-white/45 hover:scale-105 active:scale-95 transition-all"
       >
-        <Icon
-          icon={EditIcon}
-          className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
-          style={{ color: color ?? "#000000" }}
-        />
+        <Pencil className="size-5 text-white" />
       </button>
 
       <AssetEditModal

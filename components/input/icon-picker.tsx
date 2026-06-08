@@ -66,6 +66,17 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+function safeIconColor(color?: string): string | undefined {
+  if (!color) return undefined;
+  const h = color.replace("#", "");
+  if (h.length !== 6) return color;
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  if (r > 220 && g > 220 && b > 220) return "#1a1a2e";
+  return color;
+}
+
 export const ICON_MAP: Record<string, LucideIcon> = {
   "arrow-down-left": ArrowDownLeft,
   "arrow-up-right": ArrowUpRight,
@@ -183,7 +194,9 @@ export function FormIconPickerItem<
                           name={selectedIcon}
                           className="size-4"
                           style={
-                            accentColor ? { color: accentColor } : undefined
+                            accentColor
+                              ? { color: safeIconColor(accentColor) }
+                              : undefined
                           }
                         />
                         <span>{selectedIcon}</span>

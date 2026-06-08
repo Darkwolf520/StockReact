@@ -14,6 +14,15 @@ const sizeClasses = {
   md: { wrapper: "size-9", icon: "size-5", text: "text-sm" },
 };
 
+function isNearWhite(hex: string): boolean {
+  const h = hex.replace("#", "");
+  if (h.length !== 6) return false;
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return r > 220 && g > 220 && b > 220;
+}
+
 export default function GhostIcon({
   icon,
   fallback,
@@ -21,7 +30,8 @@ export default function GhostIcon({
   size = "md",
   className,
 }: GhostIconProps) {
-  const resolvedColor = color ?? "#000000";
+  const raw = color ?? "#000000";
+  const resolvedColor = isNearWhite(raw) ? "#1a1a2e" : raw;
   const s = sizeClasses[size];
 
   return (

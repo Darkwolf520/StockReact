@@ -28,7 +28,12 @@ export default async function Asset({
     <div className="space-y-4">
       {vendorTheme && <VendorThemeApplier theme={vendorTheme} />}
 
-      <AssetHeader textColor={textColor} asset={asset} />
+      <AssetHeader
+        textColor={textColor}
+        asset={asset}
+        categories={categories}
+        vendors={vendors}
+      />
 
       <RawChart
         title="Monthly Sales (raw Chart.js)"

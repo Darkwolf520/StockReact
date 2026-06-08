@@ -27,30 +27,14 @@ export default function StockCard({
 }: Asset & { className?: string }) {
   const vendor = asset.vendor;
   const category = asset.category;
-  const vendorColor = vendor.style?.color || "";
   const vendorImage = sanitizeImageUrl(vendor.style?.image);
-  const categoryBackgroundImage = sanitizeImageUrl(category.style?.image);
   const href = `/assets/${asset.id}`;
-  const cardStyle =
-    category.style?.bgColor || categoryBackgroundImage
-      ? {
-          backgroundImage: categoryBackgroundImage
-            ? `linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), url("${categoryBackgroundImage}")`
-            : undefined,
-          backgroundPosition: categoryBackgroundImage ? "center" : undefined,
-          backgroundRepeat: categoryBackgroundImage ? "no-repeat" : undefined,
-          backgroundSize: categoryBackgroundImage ? "cover" : undefined,
-        }
-      : undefined;
 
   return (
-    <Card
-      className={clsx("sm:max-w-[750px] cursor-pointer", className)}
-      style={cardStyle}
-    >
+    <Card className={clsx("sm:max-w-[750px] cursor-pointer", className)}>
       <Link href={href}>
         <div className="flex flex-col sm:flex-row justify-between items-center gap-y-4">
-          <div className={clsx("flex items-center")}>
+          <div className="flex items-center">
             {vendorImage && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -63,15 +47,10 @@ export default function StockCard({
               />
             )}
             {asset.name && !vendorImage && (
-              <div
-                style={{ color: vendorColor }}
-                className="text-4xl font-bold"
-              >
-                {vendor.name}
-              </div>
+              <div className="text-4xl font-bold">{vendor.name}</div>
             )}
           </div>
-          <div style={{ color: vendorColor }} className={`text-3xl font-bold`}>
+          <div className="text-3xl font-bold">
             {Intl.NumberFormat("hu-HU").format(asset.value)}{" "}
             {typeof asset.currency === "string"
               ? asset.currency
@@ -79,9 +58,7 @@ export default function StockCard({
           </div>
         </div>
         <div className="mt-4 flex justify-between items-end">
-          <div style={{ color: vendorColor }} className="text-2xl font-bold">
-            {asset.name}
-          </div>
+          <div className="text-2xl font-bold">{asset.name}</div>
           <AssetCategoryLabel category={category} />
         </div>
       </Link>

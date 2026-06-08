@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import AssetCategoryLabel from "@/components/AssetCategoryLabel";
 import AssetEditButton from "@/components/AssetEditButton";
 import Card from "@/components/Card";
 import { Asset, AssetVendor, Category } from "@/types/domain";
@@ -25,10 +24,17 @@ function sanitizeImageUrl(url?: string | null) {
 
 type AssetHeaderProps = {
   asset: Asset;
+  categories: Category[];
+  vendors: AssetVendor[];
   textColor?: string;
 };
 
-export default function AssetHeader({ asset, textColor }: AssetHeaderProps) {
+export default function AssetHeader({
+  asset,
+  categories,
+  vendors,
+  textColor,
+}: AssetHeaderProps) {
   const [currentAsset, setCurrentAsset] = useState(asset);
 
   useEffect(() => {
@@ -45,21 +51,32 @@ export default function AssetHeader({ asset, textColor }: AssetHeaderProps) {
   return (
     <>
       <Card variant="strong" className={textColor}>
-        <div>PORTFOLIO VALUE</div>
-        <h1>
-          {formattedValue} {currencySymbol}
-        </h1>
+        <div className="flex justify-between items-start">
+          <div>
+            <div>PORTFOLIO VALUE</div>
+            <h1>
+              {formattedValue} {currencySymbol}
+            </h1>
 
-        {vendorImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={vendorImage}
-            alt={`${currentAsset.vendor.name} image`}
-            className="h-14 max-w-[180px] object-contain rounded bg-white px-1 py-0.5"
+            {vendorImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={vendorImage}
+                alt={`${currentAsset.vendor.name} image`}
+                className="h-14 max-w-[180px] object-contain rounded px-1 py-0.5"
+              />
+            ) : (
+              <div className="text-2xl">{currentAsset.vendor.name}</div>
+            )}
+          </div>
+
+          <AssetEditButton
+            asset={currentAsset}
+            categories={categories}
+            vendors={vendors}
+            onSuccess={setCurrentAsset}
           />
-        ) : (
-          <div className="text-2xl">{currentAsset.vendor.name}</div>
-        )}
+        </div>
       </Card>
     </>
   );
