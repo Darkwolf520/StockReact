@@ -11,7 +11,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
+import { Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+
 
 import GhostIcon from "@/components/GhostIcon";
 import {
@@ -20,9 +22,7 @@ import {
   numberRangeFilterFn,
 } from "@/components/table/ColumnFilterControls";
 import FilterBar from "@/components/table/FilterBar";
-import { Button } from "@/components/ui/button";
 import { getTransactionCategoryStyle } from "@/lib/transaction-category-styles";
-import { getContrastTextColor } from "@/lib/utils";
 import { Asset, Transaction } from "@/types/domain";
 
 import TransactionModal from "./TransactionModal";
@@ -30,11 +30,9 @@ import TransactionModal from "./TransactionModal";
 export default function AssetTransactions({
   asset,
   transactions,
-  buttonColor,
 }: {
   asset: Asset;
   transactions: Transaction[];
-  buttonColor?: string;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -211,12 +209,12 @@ export default function AssetTransactions({
       case "name":
         return "text-lg font-medium sm:text-base sm:font-normal";
       case "amount":
-        return clsx("text-lg font-medium sm:text-base sm:font-normal", {
-          "text-emerald-700": row.type.toLowerCase() === "income",
-          "text-rose-700": row.type.toLowerCase() === "expense",
+        return clsx("text-lg font-medium sm:text-base", {
+          "text-emerald-400": row.type.toLowerCase() === "income",
+          "text-rose-400": row.type.toLowerCase() === "expense",
         });
       case "date":
-        return "text-gray-600 sm:text-black";
+        return "";
 
       case "categoryName":
         return "";
@@ -225,34 +223,20 @@ export default function AssetTransactions({
     }
   };
 
-  const primaryButtonTextColor = buttonColor
-    ? getContrastTextColor(buttonColor)
-    : undefined;
-  const primaryButtonShadowStyle = {
-    boxShadow: "4px 4px 0 rgba(0,0,0,0.28)",
-  };
-
   return (
     <div>
       <div className="flex justify-end mb-4">
-        <Button
+        <button
+          type="button"
           onClick={() => openModal()}
-          style={
-            buttonColor
-              ? {
-                  backgroundColor: buttonColor,
-                  color: primaryButtonTextColor,
-                  ...primaryButtonShadowStyle,
-                }
-              : undefined
-          }
+          className="cursor-pointer inline-flex items-center justify-center size-10 rounded-full bg-white/30 border border-white/45 shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.7)] hover:bg-white/45 hover:scale-105 active:scale-95 transition-all"
         >
-          Add Transaction
-        </Button>
+          <Plus className="size-5 text-white" />
+        </button>
       </div>
 
       <div className="mb-4">
-        <div className="overflow-hidden rounded-lg glass">
+        <div className="overflow-hidden rounded-lg glass text-white">
           <div className="px-4 py-3 text-sm font-semibold">Transactions</div>
 
           <FilterBar table={table} columns={filterColumns} />
@@ -276,7 +260,7 @@ export default function AssetTransactions({
               ))}
             </div>
 
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-white/10">
               {table.getRowModel().rows.map((tableRow) => {
                 const row = tableRow.original;
                 const style = getTransactionCategoryStyle(
@@ -300,7 +284,7 @@ export default function AssetTransactions({
                       />
                       <div className="flex flex-1 flex-col min-w-0">
                         <span className="truncate font-medium">{row.name}</span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-white/50">
                           {row.date}
                         </span>
                       </div>
@@ -308,8 +292,8 @@ export default function AssetTransactions({
                         className={clsx(
                           "shrink-0 font-medium",
                           row.type.toLowerCase() === "income"
-                            ? "text-emerald-700"
-                            : "text-rose-700",
+                            ? "text-emerald-400"
+                            : "text-rose-400",
                         )}
                       >
                         {prefix}
@@ -340,7 +324,7 @@ export default function AssetTransactions({
               })}
 
               {table.getRowModel().rows.length === 0 && (
-                <div className="px-4 py-6 text-center text-gray-500">
+                <div className="px-4 py-6 text-center text-white/50">
                   No transactions yet.
                 </div>
               )}

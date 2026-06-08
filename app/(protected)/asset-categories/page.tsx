@@ -6,7 +6,7 @@ export default async function AssetCategoriesPage() {
 
   return (
     <div>
-      <h1>Asset categories</h1>
+      <h1 className="text-white">Asset categories</h1>
       <AssetCategoryList categories={categories} />
     </div>
   );

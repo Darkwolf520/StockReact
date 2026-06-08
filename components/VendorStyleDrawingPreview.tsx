@@ -1,200 +1,241 @@
-﻿"use client";
+"use client";
 
-import { getContrastTextColor } from "@/lib/utils";
+import { hexToRgb } from "@/lib/utils";
 
-type VendorStyleDrawingPreviewProps = {
+type Props = {
   vendorName?: string;
-  color?: string;
-  bgColor?: string;
-  accentColor?: string;
-  secondaryButtonColor?: string;
+  blobFirst?: string;
+  blobSecond?: string;
+  blobThird?: string;
+  bgFirst?: string;
+  bgSecond?: string;
+  bgThird?: string;
 };
 
-const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
-const DEFAULT_GRADIENT_BACKGROUND =
-  "linear-gradient(to bottom, #6756FF, #9DE5FF)";
+const DEFAULTS = {
+  blobFirst: "#533483",
+  blobSecond: "#E94560",
+  blobThird: "#0F3460",
+  bgFirst: "#1A1A2E",
+  bgSecond: "#16213E",
+  bgThird: "#0F3460",
+};
 
-const safeHexColor = (value: string | undefined, fallback: string) => {
-  if (!value || !HEX_COLOR_PATTERN.test(value)) {
-    return fallback;
-  }
+const resolve = (value: string | undefined, fallback: string) =>
+  value && /^#[0-9A-Fa-f]{6}$/.test(value) ? value : fallback;
 
-  return value;
+const glass: React.CSSProperties = {
+  background: "rgba(255,255,255,0.18)",
+  border: "1px solid rgba(255,255,255,0.3)",
+  borderRadius: 6,
 };
 
 export default function VendorStyleDrawingPreview({
   vendorName,
-  color,
-  bgColor,
-  accentColor,
-  secondaryButtonColor,
-}: VendorStyleDrawingPreviewProps) {
-  const displayVendorName = vendorName?.trim() || "Vendor name";
-  const titleAndIconColor = safeHexColor(color, "#FFFFFF");
-  const calcColor = safeHexColor(color, "#000000");
-  const hasCustomBgColor = Boolean(bgColor && HEX_COLOR_PATTERN.test(bgColor));
-  const calcBgColor = hasCustomBgColor
-    ? safeHexColor(bgColor, "#FFFFFF")
-    : DEFAULT_GRADIENT_BACKGROUND;
-  const calcAccentColor = safeHexColor(accentColor, "#FFFFFF");
-  const calcSecondaryButtonColor = safeHexColor(
-    secondaryButtonColor,
-    "#FFFFFF",
-  );
-  const bgTextColor = hasCustomBgColor
-    ? getContrastTextColor(calcBgColor)
-    : "#111827";
-  const accentTextColor = getContrastTextColor(calcAccentColor);
-  const primaryButtonTextColor = getContrastTextColor(calcColor);
-  const secondaryButtonTextColor = getContrastTextColor(
-    calcSecondaryButtonColor,
-  );
-  const hasWhiteSecondaryButton =
-    calcSecondaryButtonColor.toLowerCase() === "#ffffff";
-  const buttonShadowStyle = { boxShadow: "4px 4px 0 rgba(0,0,0,0.28)" };
+  blobFirst,
+  blobSecond,
+  blobThird,
+  bgFirst,
+  bgSecond,
+  bgThird,
+}: Props) {
+  const bg1 = hexToRgb(resolve(bgFirst, DEFAULTS.bgFirst));
+  const bg2 = hexToRgb(resolve(bgSecond, DEFAULTS.bgSecond));
+  const bg3 = hexToRgb(resolve(bgThird, DEFAULTS.bgThird));
+  const b1 = resolve(blobFirst, DEFAULTS.blobFirst);
+  const b2 = resolve(blobSecond, DEFAULTS.blobSecond);
+  const b3 = resolve(blobThird, DEFAULTS.blobThird);
+
+  const displayName = vendorName?.trim() || "Vendor";
+
+  const blobBase: React.CSSProperties = {
+    position: "absolute",
+    width: "60%",
+    height: "60%",
+    borderRadius: "50%",
+    filter: "blur(24px)",
+    opacity: 0.75,
+  };
 
   return (
     <div
-      className="w-full max-w-[360px] rounded-md border p-2 flex flex-col gap-y-2"
-      style={{ background: calcBgColor, color: bgTextColor }}
+      className="relative w-full max-w-[360px] rounded-md border overflow-hidden select-none"
+      style={{
+        background: `linear-gradient(145deg, ${bg1}, ${bg2}, ${bg3})`,
+        color: "#fff",
+        fontSize: 10,
+      }}
     >
-      <div
-        style={{ color: titleAndIconColor }}
-        className="mb-2 flex items-center justify-between text-xs font-semibold drop-shadow-[0_2px_6px_rgba(0,0,0,0.28)]"
-      >
-        <span>{displayVendorName}</span>
-        <span>icon</span>
-      </div>
+      {/* Blobs */}
+      <div style={{ ...blobBase, background: b1, top: "10%", left: "-10%" }} />
+      <div style={{ ...blobBase, background: b2, top: "30%", right: "-10%" }} />
+      <div style={{ ...blobBase, background: b3, left: "20%", bottom: "5%" }} />
 
-      <div
-        className="w-fit rounded-lg px-2 py-1 shadow-lg ring-1 ring-black/5"
-        style={{ backgroundColor: calcAccentColor, color: accentTextColor }}
-      >
-        Total value: 1000
-      </div>
-
-      <div
-        className="rounded-md border p-2 shadow-lg ring-1 ring-black/5"
-        style={{ backgroundColor: calcAccentColor, color: accentTextColor }}
-      >
-        <div className="mb-2 flex items-center justify-between text-xs">
-          <button
-            type="button"
-            className={
-              hasWhiteSecondaryButton
-                ? "rounded border px-1.5 py-0.5"
-                : "rounded border-0 px-1.5 py-0.5"
-            }
-            style={{
-              backgroundColor: calcSecondaryButtonColor,
-              color: secondaryButtonTextColor,
-              ...buttonShadowStyle,
-            }}
+      {/* Content overlay */}
+      <div className="relative z-10 flex flex-col gap-2 p-3">
+        {/* Header card */}
+        <div style={glass} className="p-2">
+          <div
+            style={{ fontSize: 7, letterSpacing: 1 }}
+            className="uppercase opacity-70"
           >
-            {"<"}
-          </button>
-          <span>2026-04-15 to 2027-01-01</span>
-          <button
-            type="button"
-            className={
-              hasWhiteSecondaryButton
-                ? "rounded border px-1.5 py-0.5"
-                : "rounded border-0 px-1.5 py-0.5"
-            }
-            style={{
-              backgroundColor: calcSecondaryButtonColor,
-              color: secondaryButtonTextColor,
-              ...buttonShadowStyle,
-            }}
-          >
-            {">"}
-          </button>
+            Portfolio Value
+          </div>
+          <div style={{ fontSize: 14 }} className="font-bold">
+            635 003 Ft
+          </div>
+          <div className="mt-1 opacity-80">{displayName}</div>
         </div>
 
-        <div
-          className="mb-2 h-24 rounded border"
-          style={{ backgroundColor: "rgba(255,255,255,0.55)" }}
-        />
+        {/* Chart card */}
+        <div style={glass} className="p-2">
+          <div className="flex items-center justify-between mb-1">
+            <div
+              style={{
+                ...glass,
+                padding: "1px 5px",
+                fontSize: 9,
+                cursor: "default",
+              }}
+            >
+              {"<"}
+            </div>
+            <div className="text-center">
+              <div style={{ fontSize: 9 }} className="font-medium">
+                Monthly Sales
+              </div>
+              <div style={{ fontSize: 7 }} className="opacity-50">
+                2026-06-01 — 2026-06-30
+              </div>
+            </div>
+            <div
+              style={{
+                ...glass,
+                padding: "1px 5px",
+                fontSize: 9,
+                cursor: "default",
+              }}
+            >
+              {">"}
+            </div>
+          </div>
 
-        <div className="flex flex-wrap gap-2 text-xs">
-          <button
-            type="button"
-            className="rounded border px-2 py-1"
+          {/* Chart area placeholder */}
+          <div
+            className="rounded"
             style={{
-              backgroundColor: calcColor,
-              color: primaryButtonTextColor,
-              ...buttonShadowStyle,
+              height: 56,
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.15)",
             }}
-          >
-            1 month
-          </button>
-          <button
-            type="button"
-            className={
-              hasWhiteSecondaryButton
-                ? "rounded border px-2 py-1"
-                : "rounded border-0 px-2 py-1"
-            }
-            style={{
-              backgroundColor: calcSecondaryButtonColor,
-              color: secondaryButtonTextColor,
-              ...buttonShadowStyle,
-            }}
-          >
-            3 months
-          </button>
-          <button
-            type="button"
-            className={
-              hasWhiteSecondaryButton
-                ? "rounded border px-2 py-1"
-                : "rounded border-0 px-2 py-1"
-            }
-            style={{
-              backgroundColor: calcSecondaryButtonColor,
-              color: secondaryButtonTextColor,
-              ...buttonShadowStyle,
-            }}
-          >
-            6 months
-          </button>
-          <button
-            type="button"
-            className={
-              hasWhiteSecondaryButton
-                ? "rounded border px-2 py-1 font-semibold"
-                : "rounded border-0 px-2 py-1 font-semibold"
-            }
-            style={{
-              backgroundColor: calcSecondaryButtonColor,
-              color: secondaryButtonTextColor,
-              ...buttonShadowStyle,
-            }}
-          >
-            all
-          </button>
+          />
+
+          {/* Period buttons */}
+          <div className="flex gap-1 mt-2">
+            {["1m", "3m", "6m", "1y", "All"].map((label) => (
+              <div
+                key={label}
+                style={{
+                  ...glass,
+                  padding: "1px 5px",
+                  fontSize: 8,
+                  cursor: "default",
+                }}
+              >
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className="rounded px-2 py-1 text-xs font-semibold inline-flex items-end w-fit"
-          style={{
-            backgroundColor: calcColor,
-            color: primaryButtonTextColor,
-            ...buttonShadowStyle,
-          }}
-        >
-          Add Transaction
-        </button>
-      </div>
+        {/* Add Transaction button */}
+        <div className="flex justify-end">
+          <div
+            style={{
+              ...glass,
+              width: 20,
+              height: 20,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 12,
+              fontWeight: 600,
+              lineHeight: 1,
+            }}
+          >
+            +
+          </div>
+        </div>
 
-      <div
-        className="mt-2 rounded-md border p-2 shadow-lg ring-1 ring-black/5"
-        style={{ backgroundColor: calcAccentColor, color: accentTextColor }}
-      >
-        <div className="mb-2 text-xs font-semibold">Transactions</div>
+        {/* Transactions card */}
+        <div style={glass} className="p-2">
+          <div className="font-semibold mb-1" style={{ fontSize: 10 }}>
+            Transactions
+          </div>
+          <div
+            className="flex gap-1 items-center mb-1.5"
+            style={{ fontSize: 8 }}
+          >
+            <div
+              style={{
+                ...glass,
+                padding: "0px 4px",
+                fontSize: 7,
+              }}
+            >
+              + Filter
+            </div>
+          </div>
+
+          {/* Table header */}
+          <div
+            className="grid opacity-60"
+            style={{
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              fontSize: 7,
+              borderBottom: "1px solid rgba(255,255,255,0.15)",
+              paddingBottom: 2,
+              marginBottom: 3,
+            }}
+          >
+            <span>Category</span>
+            <span>Name</span>
+            <span>Amount</span>
+            <span>Date</span>
+          </div>
+
+          {/* Row 1 */}
+          <div
+            className="grid items-center"
+            style={{
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              fontSize: 8,
+              paddingBottom: 2,
+              marginBottom: 2,
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
+            }}
+          >
+            <span className="opacity-80">Other</span>
+            <span>w213e</span>
+            <span style={{ color: "#f87171" }}>-1000 Ft</span>
+            <span className="opacity-70">2026-05-19</span>
+          </div>
+
+          {/* Row 2 */}
+          <div
+            className="grid items-center"
+            style={{
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              fontSize: 8,
+            }}
+          >
+            <span className="opacity-80">Investment</span>
+            <span>Transaction 6</span>
+            <span style={{ color: "#34d399" }}>+632445 Ft</span>
+            <span className="opacity-70">2026-05-09</span>
+          </div>
+        </div>
       </div>
     </div>
   );

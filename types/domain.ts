@@ -6,12 +6,24 @@ export interface Style {
   color?: string | null;
 }
 
+export interface ThemeColors {
+  first: string;
+  second: string;
+  third: string;
+}
+
+export interface Theme {
+  blobs: ThemeColors;
+  background: ThemeColors;
+}
+
 export interface CategoryStyle extends Style {
   icon?: string | null;
   image?: string | null;
   bgColor?: string | null;
   accentColor?: string | null;
   secondaryButtonColor?: string | null;
+  theme?: Theme | null;
 }
 
 export interface Currency {

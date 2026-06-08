@@ -23,8 +23,8 @@ export default async function UserLayout({
         <Menu />
         <div className="flex flex-col-reverse sm:flex-row h-full sm:h-[calc(100vh-65px)] items-center">
           <SideMenu isAdmin={isAdmin} />
-          <div className="w-full overflow-y-auto overflow-x-hidden h-full">
-            <div className="w-full px-4 sm:py-2 pb-[50px] sm:mb-0">
+          <div className="w-full overflow-y-auto overflow-x-hidden h-full sm:rounded-tl-2xl">
+            <div className="w-full px-4 sm:py-2 pb-18 sm:pb-12 sm:mb-0">
               {children}
             </div>
           </div>

@@ -71,7 +71,7 @@ function FilterChip({
   onEdit: () => void;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-black/15 bg-white/60 px-3 py-1 text-xs font-medium backdrop-blur-sm">
+    <span className="inline-flex items-center gap-1 rounded-full border border-white/45 bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.4)]">
       <button type="button" onClick={onEdit} className="cursor-pointer">
         {config.label} {formatFilterValue(config, value)}
       </button>
@@ -81,7 +81,7 @@ function FilterChip({
           e.stopPropagation();
           onRemove();
         }}
-        className="ml-0.5 cursor-pointer rounded-full p-0.5 hover:bg-black/10"
+        className="ml-0.5 cursor-pointer rounded-full p-0.5 hover:bg-white/20"
       >
         <X className="size-3" />
       </button>
@@ -107,7 +107,7 @@ function TextFilterEditor({
         if (e.key === "Enter") onClose?.();
       }}
       placeholder="Type to filter..."
-      className="h-8 bg-white"
+      className="h-8 bg-white/15 border-white/30 text-white placeholder:text-white/40"
     />
   );
 }
@@ -145,7 +145,7 @@ function NumberRangeFilterEditor({
         onChange={(e) => update("min", e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Min"
-        className="h-8 bg-white"
+        className="h-8 bg-white/15 border-white/30 text-white placeholder:text-white/40"
       />
       <Input
         type="number"
@@ -153,7 +153,7 @@ function NumberRangeFilterEditor({
         onChange={(e) => update("max", e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Max"
-        className="h-8 bg-white"
+        className="h-8 bg-white/15 border-white/30 text-white placeholder:text-white/40"
       />
     </div>
   );
@@ -189,20 +189,20 @@ function DateRangeFilterEditor({
           autoFocus
           value={draft.from ?? ""}
           onChange={(e) => updateDraft("from", e.target.value)}
-          className="h-8 bg-white w-fit"
+          className="h-8 bg-white/15 border-white/30 text-white w-fit"
         />
         <Input
           type="date"
           value={draft.to ?? ""}
           onChange={(e) => updateDraft("to", e.target.value)}
-          className="h-8 bg-white w-fit0"
+          className="h-8 bg-white/15 border-white/30 text-white w-fit"
         />
       </div>
       <button
         type="button"
         disabled={!hasValue}
         onClick={apply}
-        className="w-full cursor-pointer rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full cursor-pointer rounded-md bg-white/25 border border-white/40 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/35 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Apply
       </button>
@@ -224,7 +224,7 @@ function SelectFilterEditor({
       value={value || "all"}
       onValueChange={(v) => onChange(v === "all" ? undefined : v)}
     >
-      <SelectTrigger className="h-8 bg-white">
+      <SelectTrigger className="h-8 bg-white/15 border-white/30 text-white">
         <SelectValue placeholder="All" />
       </SelectTrigger>
       <SelectContent>
@@ -344,9 +344,12 @@ export default function FilterBar<TData>({
                 />
               </span>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-64">
+            <PopoverContent
+              align="start"
+              className="w-64 border-white/30 bg-white/15 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.1)]"
+            >
               <div className="space-y-2">
-                <div className="text-xs font-medium text-muted-foreground">
+                <div className="text-xs font-medium text-white/60">
                   {config.label}
                 </div>
                 <FilterEditor
@@ -372,14 +375,17 @@ export default function FilterBar<TData>({
           <button
             type="button"
             className={cn(
-              "inline-flex cursor-pointer items-center gap-1 rounded-full border border-dashed border-black/20 px-2 py-1 text-xs font-medium text-black/60 transition-colors hover:border-black/40 hover:text-black/80",
+              "inline-flex cursor-pointer items-center gap-1 rounded-full border border-dashed border-white/40 px-2 py-1 text-xs font-medium text-white/70 transition-colors hover:border-white/60 hover:text-white hover:bg-white/10",
             )}
           >
             <Plus className="size-3" />
             Filter
           </button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="p-0 w-auto min-w-[120px]">
+        <PopoverContent
+          align="start"
+          className="p-0 w-auto min-w-[120px] border-white/30 bg-white/15 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.1)]"
+        >
           {!selectedColumn ? (
             <div className="py-1">
               {availableColumns.map((col) => (
@@ -387,7 +393,7 @@ export default function FilterBar<TData>({
                   key={col.id}
                   type="button"
                   onClick={() => setSelectedColumn(col.id)}
-                  className="w-full cursor-pointer px-4 py-2 text-left text-sm hover:bg-accent"
+                  className="w-full cursor-pointer px-4 py-2 text-left text-sm text-white hover:bg-white/15"
                 >
                   {col.label}
                 </button>
@@ -395,7 +401,7 @@ export default function FilterBar<TData>({
             </div>
           ) : (
             <div className="space-y-2 p-4">
-              <div className="text-xs font-medium text-muted-foreground">
+              <div className="text-xs font-medium text-white/60">
                 {columns.find((c) => c.id === selectedColumn)?.label}
               </div>
               <FilterEditor

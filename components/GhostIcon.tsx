@@ -28,7 +28,7 @@ export default function GhostIcon({
     <span
       className={cn(
         "inline-flex shrink-0 items-center justify-center rounded-full",
-        "bg-white/30 border border-white/45",
+        "bg-white/30 border border-white/45  shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.7)]",
         s.wrapper,
         className,
       )}

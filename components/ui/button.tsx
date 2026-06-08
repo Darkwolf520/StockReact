@@ -17,7 +17,7 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
-          "border border-white/55 bg-white/15 hover:bg-white/45 shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.7)]",
+          "border text-white border-white/55 bg-white/15 hover:bg-white/45 shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.7)]",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -67,7 +67,7 @@ function Button({
         "relative",
         !(disabled || isLoading) && "cursor-pointer",
         (disabled || isLoading) && "cursor-not-allowed opacity-50",
-        isActive && variant === "ghost" && "bg-white/70 hover:bg-white/70",
+        isActive && variant === "ghost" && "bg-white/60 hover:bg-white/60",
       )}
       {...props}
     >

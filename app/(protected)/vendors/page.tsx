@@ -6,7 +6,7 @@ export default async function VendorsPage() {
 
   return (
     <div>
-      <h1>Vendors</h1>
+      <h1 className="text-white">Vendors</h1>
       <VendorList vendors={vendors} />
     </div>
   );

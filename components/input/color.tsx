@@ -44,6 +44,7 @@ export function FormColorInputItem<
         name={name}
         label={label}
         placeholder={placeholder}
+        className="min-w-[120px]"
       />
       <FormField
         control={control}

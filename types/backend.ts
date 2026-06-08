@@ -3,12 +3,24 @@ export interface StyleDTO {
   color?: string | null;
 }
 
+export interface ThemeColorsDTO {
+  first: string;
+  second: string;
+  third: string;
+}
+
+export interface ThemeDTO {
+  blobs: ThemeColorsDTO;
+  background: ThemeColorsDTO;
+}
+
 export interface CategoryStyleDTO extends StyleDTO {
   icon?: string | null;
   image?: string | null;
   bgColor?: string | null;
   accentColor?: string | null;
   secondaryButtonColor?: string | null;
+  theme?: ThemeDTO | null;
 }
 
 export interface CurrencyDTO {

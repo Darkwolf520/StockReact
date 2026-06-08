@@ -112,7 +112,6 @@ export default function AssetChart({
   transactions,
   title = "Net Cash Flow",
   lineColor,
-  showSecondaryButtonShadow = true,
 }: AssetChartProps) {
   const [selectedRange, setSelectedRange] = useState<RangeKey>("1m");
   const [anchorMonth, setAnchorMonth] = useState<Date>(
@@ -267,6 +266,18 @@ export default function AssetChart({
         ticks: {
           autoSkip: true,
           maxTicksLimit: 12,
+          color: "rgba(255,255,255,0.7)",
+        },
+        grid: {
+          color: "rgba(255,255,255,0.1)",
+        },
+      },
+      y: {
+        ticks: {
+          color: "rgba(255,255,255,0.7)",
+        },
+        grid: {
+          color: "rgba(255,255,255,0.1)",
         },
       },
     },
@@ -294,8 +305,8 @@ export default function AssetChart({
           {"<"}
         </Button>
         <div className="text-center">
-          <div className="text-sm font-semibold text-gray-900">{title}</div>
-          <div className="text-xs text-gray-600">
+          <div className="text-sm font-semibold text-white">{title}</div>
+          <div className="text-xs text-white/60">
             {toDateKey(startDate)} - {toDateKey(endDate)}
           </div>
         </div>

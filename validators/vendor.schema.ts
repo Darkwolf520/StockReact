@@ -12,53 +12,39 @@ const optionalImageUrl = z.union([
     ),
 ]);
 
+const rgbColorSchema = z
+  .string()
+  .regex(
+    /^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/,
+    "Must be a valid rgb color (e.g. rgb(83, 52, 131))",
+  );
+
+const themeColorsSchema = z.object({
+  first: rgbColorSchema,
+  second: rgbColorSchema,
+  third: rgbColorSchema,
+});
+
+const themeSchema = z.object({
+  blobs: themeColorsSchema,
+  background: themeColorsSchema,
+});
+
 export const createVendorSchema = z.object({
   name: z.string().min(1, "Vendor name is required"),
   style: z
     .object({
-      color: z
-        .union([
-          z.literal(""),
-          z.null(),
-          z.string().regex(/^#[0-9A-F]{6}$/i, "Invalid color format"),
-        ])
-        .optional(),
-      bgColor: z
-        .union([
-          z.literal(""),
-          z.null(),
-          z.string().regex(/^#[0-9A-F]{6}$/i, "Invalid color format"),
-        ])
-        .optional(),
-      accentColor: z
-        .union([
-          z.literal(""),
-          z.null(),
-          z.string().regex(/^#[0-9A-F]{6}$/i, "Invalid color format"),
-        ])
-        .optional(),
-      secondaryButtonColor: z
-        .union([
-          z.literal(""),
-          z.null(),
-          z.string().regex(/^#[0-9A-F]{6}$/i, "Invalid color format"),
-        ])
-        .optional(),
       image: optionalImageUrl.optional(),
+      theme: themeSchema.optional().nullable(),
     })
     .optional()
     .transform((style) => {
       if (!style) return undefined;
 
-      const nextStyle = {
-        color: style.color || null,
-        bgColor: style.bgColor || null,
-        accentColor: style.accentColor || null,
-        secondaryButtonColor: style.secondaryButtonColor || null,
+      return {
         image: style.image || null,
+        theme: style.theme || null,
       };
-
-      return nextStyle;
     }),
   description: z.string().optional(),
 });
