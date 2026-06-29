@@ -128,6 +128,57 @@ body,
   }
 }
 
+[data-slot="dialog-content"] [data-slot="input"],
+[data-slot="dialog-content"] [data-slot="textarea"],
+[data-slot="alert-dialog-content"] [data-slot="input"],
+[data-slot="alert-dialog-content"] [data-slot="textarea"] {
+  @apply bg-white/15 border-white/30 text-white placeholder:text-white/40;
+}
+
+[data-slot="dialog-content"] [data-slot="input"][type="color"],
+[data-slot="alert-dialog-content"] [data-slot="input"][type="color"] {
+  @apply border-white/30;
+}
+
+[data-slot="dialog-content"] [data-slot="select-trigger"],
+[data-slot="alert-dialog-content"] [data-slot="select-trigger"] {
+  @apply bg-white/15 border-white/30 text-white;
+}
+
+[data-slot="dialog-content"]
+  [data-slot="select-trigger"]
+  [data-slot="select-value"][data-placeholder],
+[data-slot="alert-dialog-content"]
+  [data-slot="select-trigger"]
+  [data-slot="select-value"][data-placeholder] {
+  @apply text-white/40;
+}
+
+[data-slot="dialog-content"] [data-slot="select-trigger"] svg,
+[data-slot="alert-dialog-content"] [data-slot="select-trigger"] svg {
+  @apply text-white/50;
+}
+
+[data-slot="dialog-content"] button[data-slot="popover-trigger"],
+[data-slot="alert-dialog-content"] button[data-slot="popover-trigger"] {
+  @apply bg-white/15 border-white/30 text-white;
+}
+
+[data-slot="dialog-content"] [data-slot="label"],
+[data-slot="alert-dialog-content"] [data-slot="label"] {
+  @apply text-white/80;
+}
+
+[data-slot="dialog-content"] [data-slot="form-message"],
+[data-slot="alert-dialog-content"] [data-slot="form-message"] {
+  @apply text-rose-300;
+}
+
+[data-slot="dialog-content"] [data-slot="dialog-description"],
+[data-slot="alert-dialog-content"] [data-slot="alert-dialog-description"] {
+  @apply text-white/60;
+}
+
 .blob {
   position: absolute;
   filter: blur(60px);

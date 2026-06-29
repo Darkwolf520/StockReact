@@ -62,7 +62,7 @@ export function FormColorInputItem<
                 />
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => field.onChange("")}
                 >

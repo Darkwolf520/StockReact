@@ -10,9 +10,18 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 import { cn } from "@/lib/utils";
+
+import FilterBar from "./FilterBar";
+
+type FilterColumnConfig = {
+  id: string;
+  label: string;
+  type: "text" | "number-range" | "date-range" | "select";
+  options?: { value: string; label: string }[];
+};
 
 type FilterableDataTableProps<TData> = {
   columns: ColumnDef<TData>[];
@@ -20,11 +29,11 @@ type FilterableDataTableProps<TData> = {
   emptyText: string;
   title?: string;
   gridClassName: string;
+  filterColumns?: FilterColumnConfig[];
   onRowClick?: (row: TData) => void;
   getCellClassName?: (row: TData, columnId: string) => string;
   getCellValueClassName?: (row: TData, columnId: string) => string;
-  getMobileLabel?: (columnId: string) => string;
-  backgroundColor?: string;
+  renderMobileCard?: (row: TData) => ReactNode;
 };
 
 export default function FilterableDataTable<TData>({
@@ -33,11 +42,11 @@ export default function FilterableDataTable<TData>({
   emptyText,
   title,
   gridClassName,
+  filterColumns,
   onRowClick,
   getCellClassName,
   getCellValueClassName,
-  getMobileLabel,
-  backgroundColor,
+  renderMobileCard,
 }: FilterableDataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -57,80 +66,82 @@ export default function FilterableDataTable<TData>({
   });
 
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-lg border border-gray-300",
-        !backgroundColor && "bg-white",
-      )}
-      style={backgroundColor ? { backgroundColor } : undefined}
-    >
-      {title && (
-        <div className="border-b border-gray-200 px-4 py-3 text-sm font-semibold">
-          {title}
-        </div>
-      )}
+    <div className="overflow-hidden rounded-lg glass text-white">
+      {title && <div className="px-4 py-3 text-sm font-semibold">{title}</div>}
+
+      {filterColumns && <FilterBar table={table} columns={filterColumns} />}
 
       <div className="text-sm">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <div
-            key={headerGroup.id}
-            className={cn(
-              "grid border-b border-gray-200 bg-gray-50",
-              gridClassName,
-            )}
-          >
-            {headerGroup.headers.map((header) => (
-              <div key={header.id} className="px-4 py-2 font-medium">
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-              </div>
-            ))}
-          </div>
-        ))}
+        {/* Desktop headers */}
+        <div className="hidden sm:block">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <div key={headerGroup.id} className={cn("grid", gridClassName)}>
+              {headerGroup.headers.map((header) => (
+                <div key={header.id} className="px-4 py-2 font-medium">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
 
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-white/10">
           {table.getRowModel().rows.map((tableRow) => (
             <div
               key={tableRow.id}
               onClick={() => onRowClick?.(tableRow.original)}
               className={cn(
-                "grid items-start py-3 transition hover:bg-gray-50",
+                "transition hover:bg-white/10",
                 onRowClick && "cursor-pointer",
-                gridClassName,
               )}
             >
-              {tableRow.getVisibleCells().map((cell) => (
-                <div
-                  key={cell.id}
-                  className={cn(
-                    "px-4 py-1 sm:py-0",
-                    getCellClassName?.(tableRow.original, cell.column.id),
-                  )}
-                >
-                  {getMobileLabel && (
-                    <div className="mb-1 text-xs capitalize text-gray-500 sm:hidden">
-                      {getMobileLabel(cell.column.id)}
-                    </div>
-                  )}
+              {/* Mobile card */}
+              {renderMobileCard && (
+                <div className="sm:hidden px-4 py-3">
+                  {renderMobileCard(tableRow.original)}
+                </div>
+              )}
+
+              {/* Desktop grid */}
+              <div
+                className={cn(
+                  "items-center py-2",
+                  renderMobileCard ? "hidden sm:grid" : "grid",
+                  gridClassName,
+                )}
+              >
+                {tableRow.getVisibleCells().map((cell) => (
                   <div
-                    className={getCellValueClassName?.(
-                      tableRow.original,
-                      cell.column.id,
+                    key={cell.id}
+                    className={cn(
+                      "px-4 py-1 sm:py-0",
+                      getCellClassName?.(tableRow.original, cell.column.id),
                     )}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <div
+                      className={getCellValueClassName?.(
+                        tableRow.original,
+                        cell.column.id,
+                      )}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ))}
 
           {table.getRowModel().rows.length === 0 && (
-            <div className="px-4 py-6 text-center text-gray-500">
+            <div className="px-4 py-6 text-center text-white/50">
               {emptyText}
             </div>
           )}

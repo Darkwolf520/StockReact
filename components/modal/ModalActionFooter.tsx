@@ -30,7 +30,7 @@ export default function ModalActionFooter({
         </Button>
         <Button
           type="button"
-          variant="secondary"
+          variant="ghost"
           disabled={isSubmitting || isDeleting}
           onClick={onCancel}
         >
